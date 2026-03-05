@@ -1,4 +1,4 @@
-package ordentperpustakaan
+package main
 
 import (
 	"log"

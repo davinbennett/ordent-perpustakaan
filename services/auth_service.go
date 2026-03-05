@@ -50,11 +50,11 @@ func SendOTP(email string, isFrom string) string {
 
 	key := "otp:" + email
 
-	err = config.RedisClient.HSet(config.RedisCtx, key, map[string]interface{}{
-		"code":     hashedOTP,
-		"verified": false,
-	}).Err()
-	if err != nil {
+	errR := config.RedisClient.HSet(config.RedisCtx, key,
+		"code", hashedOTP,
+		"verified", "false",
+	).Err()
+	if errR != nil {
 		return "Failed to save OTP."
 	}
 
@@ -83,7 +83,7 @@ func VerifyOTP(email, otp string) (bool, string) {
 		return false, "Incorrect OTP."
 	}
 
-	config.RedisClient.HSet(config.RedisCtx, key, "verified", true)
+	config.RedisClient.HSet(config.RedisCtx, key, "verified", "true")
 
 	return true, ""
 }

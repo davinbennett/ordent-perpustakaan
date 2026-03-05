@@ -1,5 +1,5 @@
 # ========= BUILD STAGE =========
-FROM golang:1.25.5-alpine AS builder
+FROM golang:1.25-alpine AS builder
 
 WORKDIR /app
 
@@ -8,19 +8,20 @@ RUN go mod download
 
 COPY . .
 
-RUN CGO_ENABLED=0 go build -o ordent-backend ./main.go
+RUN rm -f ordent-perpustakaan-backend
+
+RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o /app-bin ./main.go
 
 
-FROM alpine:3.19
+FROM alpine:latest
 
 WORKDIR /app
 
-COPY --from=builder /app/ordent-backend /app/ordent-backend
-
+COPY --from=builder /app-bin /app/ordent-perpustakaan-backend
 COPY config /app/config
 
-RUN chmod +x /app/ordent-backend
+RUN chmod +x /app/ordent-perpustakaan-backend
 
-EXPOSE 8081
+EXPOSE 8080
 
-CMD ["/app/ordent-backend"]
+CMD ["/app/ordent-perpustakaan-backend"]
